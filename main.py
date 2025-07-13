@@ -1,4 +1,5 @@
-from flask import Flask, redirect, url_for, render_template, abort
+from flask import Flask, redirect, url_for, render_template, abort, request, flash, session
+from functools import wraps
 import frontmatter
 import markdown
 import glob
@@ -6,6 +7,41 @@ import os
 
 app = Flask(__name__)
 
+# Admin authentication
+app.secret_key = "your_secret_key"
+
+USERNAME = "admin"
+PASSWORD = "secret"
+
+@app.route("/login", methods=["POST", "GET"])
+def login():
+    
+    if request.method == "POST":
+        username = request.form["username"]
+        password = request.form["password"]
+
+        if username == USERNAME and password == PASSWORD:
+            session["admin_logged_in"] = True
+            return redirect(url_for("admin_dashboard"))
+        else:
+            flash("invalid credentials")
+
+    return render_template("login.html")
+
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if not session.get("admin_logged_in"):
+            return redirect(url_for("login"))
+        return f(*args, **kwargs)
+    return decorated_function
+    
+@app.route("/admin")
+@login_required
+def admin_dashboard():
+    return render_template("admin.html")
+
+# Loading written articles into the web
 def load_post():
 
     posts = []
@@ -26,11 +62,6 @@ def load_post():
         
     return posts
 
-@app.route("/")
-def home():
-    posts = load_post()
-    return render_template("index.html", article=posts)
-
 @app.route("/article/<string:get_slug>")
 def article_detail(get_slug):
     all_posts = load_post()
@@ -45,9 +76,10 @@ def article_detail(get_slug):
     else:
         abort(404)
 
-@app.route("/admin")
-def admin():
-    return redirect(url_for("home"))
+@app.route("/")
+def home():
+    posts = load_post()
+    return render_template("index.html", article=posts)
 
 if __name__ == "__main__":
     app.run(debug=True)
