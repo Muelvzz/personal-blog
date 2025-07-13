@@ -7,6 +7,10 @@ import os
 
 app = Flask(__name__)
 
+"""
+    Admin Processing
+"""
+
 # Admin authentication
 app.secret_key = "your_secret_key"
 
@@ -35,11 +39,10 @@ def login_required(f):
             return redirect(url_for("login"))
         return f(*args, **kwargs)
     return decorated_function
-    
-@app.route("/admin")
-@login_required
-def admin_dashboard():
-    return render_template("admin.html")
+
+"""
+    Article Loadings
+"""
 
 # Loading written articles into the web
 def load_post():
@@ -76,10 +79,20 @@ def article_detail(get_slug):
     else:
         abort(404)
 
+"""
+    Websites
+"""
+
 @app.route("/")
 def home():
     posts = load_post()
     return render_template("index.html", article=posts)
+
+@app.route("/admin")
+@login_required
+def admin_dashboard():
+    posts = load_post()
+    return render_template("admin.html", article=posts)
 
 if __name__ == "__main__":
     app.run(debug=True)
