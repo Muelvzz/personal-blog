@@ -24,7 +24,7 @@ def load_post():
                     "content_html": content_html
                     })
         
-        return post
+    return posts
 
 @app.route("/")
 def home():
