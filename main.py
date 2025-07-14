@@ -1,12 +1,14 @@
-from flask import Flask, redirect, url_for, render_template, abort, request, flash, session, get_next_row
+from flask import Flask, redirect, url_for, render_template, abort, request, flash, session
 from functools import wraps
 import frontmatter
 import markdown
 import glob
 import os
 from datetime import datetime
+import os
 
 time = datetime.now()
+folder_path = r"C:\Programming\Projects\Personal_Blog\articles"
 
 app = Flask(__name__)
 
@@ -110,14 +112,22 @@ def add_article():
         title = request.form.get("title")
         content = request.form.get("content")
         current_date = time.strftime("%B %d, %Y")
-        id = str(get_next_row())
 
-        item = {
-            "id": id,
-            "title": title,
-            "content": content,
-            "current_date": current_date
-        }
+        file_number = len([f for f in os.listdir(folder_path) if os.path.isfile(os.path.join(folder_path, f))]) + 1
+        file_name = f"article{file_number}.md"
+
+        file_path = os.path.join(folder_path, file_name)
+
+        file_content = f"""---
+title: {title}
+date: {current_date}
+---
+
+{content}
+        """
+
+        with open(file_path, "w") as file:
+            file.write(file_content)
 
     return render_template("add_article.html")
 
