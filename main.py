@@ -131,5 +131,15 @@ date: {current_date}
 
     return render_template("add_article.html")
 
+@app.route("/edit/<get_slug>", methods=["GET", "POST"])
+@login_required
+def edit_article(get_slug):
+    posts = load_post()
+    post = next((p for p in posts if p['slug'] == get_slug), None)
+    if not post:
+        abort(404)
+    
+    return render_template("edit_article.html", post=post, get_slug=get_slug)
+
 if __name__ == "__main__":
     app.run(debug=True)
