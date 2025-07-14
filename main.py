@@ -1,9 +1,12 @@
-from flask import Flask, redirect, url_for, render_template, abort, request, flash, session
+from flask import Flask, redirect, url_for, render_template, abort, request, flash, session, get_next_row
 from functools import wraps
 import frontmatter
 import markdown
 import glob
 import os
+from datetime import datetime
+
+time = datetime.now()
 
 app = Flask(__name__)
 
@@ -88,11 +91,35 @@ def home():
     posts = load_post()
     return render_template("index.html", article=posts)
 
+
+"""
+    Admin Website
+"""
+
 @app.route("/admin")
 @login_required
 def admin_dashboard():
     posts = load_post()
     return render_template("admin.html", article=posts)
+
+@app.route("/add", methods=["GET", "POST"])
+@login_required
+def add_article():
+
+    if request.method == "POST":
+        title = request.form.get("title")
+        content = request.form.get("content")
+        current_date = time.strftime("%B %d, %Y")
+        id = str(get_next_row())
+
+        item = {
+            "id": id,
+            "title": title,
+            "content": content,
+            "current_date": current_date
+        }
+
+    return render_template("add_article.html")
 
 if __name__ == "__main__":
     app.run(debug=True)

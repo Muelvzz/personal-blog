@@ -1,8 +1,22 @@
 {% extends 'base.html' %}
 {% block content %}
 
-<div class="container">
-    <h1>Add an Article</h1>
+<div class="container mt-5">
+    <h2 class="mb-4">Add a New Article</h2>
+    <form action="/add" method="post">
+        
+        <div class="mb-3">
+            <label for="title" class="form-label">Article Title</label>
+            <input type="text" id="title" name="title" class="form-control" placeholder="Enter your title here" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="content" class="form-label">Article Content</label>
+            <textarea id="content" name="content" rows="10" class="form-control" placeholder="Write your article here..." required></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Submit Article</button>
+    </form>
 </div>
 
 {% endblock %}
