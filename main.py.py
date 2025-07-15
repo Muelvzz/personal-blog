@@ -141,5 +141,20 @@ def edit_article(get_slug):
     
     return render_template("edit_article.html", post=post, get_slug=get_slug)
 
+@app.route('/delete/<get_slug>', methods=['POST'])
+def delete_article(get_slug):
+
+    folder = f"articles"
+    file = f"{get_slug}.md"
+
+    file_path = os.path.join(folder, file)
+
+    if os.path.exists(file_path):
+        os.remove(file_path)
+        flash("Article deleted successfully!", "success")
+
+    return redirect(url_for('admin_dashboard'))
+
+
 if __name__ == "__main__":
     app.run(debug=True)
