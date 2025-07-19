@@ -1,10 +1,12 @@
-{% extends 'base.html' %}
-
-{% block title %}
-    Home
-{% endblock %}
-
-
-{% block content %}
-    <h1>Hey there from the home page</h1>
-{% endblock %}
+{% extends 'posts_div.html' %}
+    {% block title %}
+        {{ username }}'s Posts'
+    {% endblock %}  
+    {% block header %}
+        {{username}}'s Post
+    {% endblock %}
+    {% block footer %}
+    <div align="center">
+        <a href="/home"><button class="btn btn-lg btn-secondary" type="submit">Back</button></a>
+    </div>
+    {% endblock %}
