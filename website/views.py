@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for
 from flask_login import login_required, current_user
-from .models import Post
+from .models import Post, User
 from . import db
 
 views = Blueprint("views", __name__)
@@ -32,3 +32,21 @@ def create_post():
             return redirect(url_for("views.home"))
 
     return render_template("create_post.html", user=current_user)
+
+@views.route("/delete-post/<get_id>")
+@login_required
+def delete_post(get_id):
+
+    post = Post.query.filter_by(id=get_id).first()
+    if not post:
+        flash("Post does not exist", category="error")
+
+    elif current_user.id != post.id:
+        flash("You do not have permission to delete the post", category="error")
+
+    else:
+        db.session.delete(post)
+        db.session.commit()
+        flash("Post successfully delete", category="success")
+
+    return redirect(url_for("views.home"))

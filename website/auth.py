@@ -63,7 +63,7 @@ def sign_up():
 
     return render_template("signup.html", user=current_user)
 
-@auth.route("/log-out")
+@auth.route("/logout")
 @login_required
 def log_out():
     logout_user()
